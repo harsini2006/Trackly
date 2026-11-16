@@ -76,7 +76,14 @@ fun WishlistTab(
     var itemPrice by remember { mutableStateOf("") }
     var itemNotes by remember { mutableStateOf("") }
 
-    val remainingBuffer = (calculation.allowance - calculation.spentSoFar).coerceAtLeast(0.0)
+    val remainingBuffer = calculation.remainingBalance.coerceAtLeast(0.0)
+    var running = 0.0
+    val affordable = wishlistItems
+    .filter { !it.isPurchased }
+    .associate { item -> 
+        running += item.targetPrice
+        item.id to (running <= remainingBuffer)
+    }
 
     Column(
         modifier = Modifier
